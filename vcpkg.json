@@ -1,0 +1,12 @@
+{
+  "name": "rendering-test",
+  "version": "0.1.0",
+  "dependencies": [
+    "fmt",
+    "spdlog",
+    "vulkan",
+    "fmt",
+    "glfw3",
+    "vulkan-memory-allocator"
+  ]
+}
