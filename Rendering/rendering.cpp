@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "window.hpp"
-#include "vulkan_app.hpp"
 
 
 using namespace std::string_literals;

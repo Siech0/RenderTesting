@@ -11,7 +11,7 @@ find_package(Vulkan REQUIRED FATAL_ERROR)
 find_package(unofficial-vulkan-memory-allocator CONFIG REQUIRED)
 
 # Add source to this project's executable.
-add_executable (Rendering "rendering.cpp" "vulkan_app.hpp" "vulkan_app.cpp" "window.hpp" "window.cpp")
+add_executable (Rendering "rendering.cpp" "window.hpp" "window.cpp")
 
 target_include_directories(Rendering
 	PRIVATE ${GLFW_INCLUDE_DIRS}
