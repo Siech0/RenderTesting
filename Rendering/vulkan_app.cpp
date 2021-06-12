@@ -274,6 +274,10 @@ namespace gfx
 
 		// 8 bits for blue, green, red, alpha
 		auto format = vk::Format::eB8G8R8A8Unorm;
-		auto extent = vk::Extent2D{ width, height };
+		auto extent = vk::Extent2D
+		{ 
+			static_cast<uint32_t>(width), 
+			static_cast<uint32_t>(height) 
+		};
 	}
 }

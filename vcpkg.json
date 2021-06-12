@@ -7,6 +7,7 @@
     "vulkan",
     "fmt",
     "glfw3",
-    "vulkan-memory-allocator"
+    "vulkan-memory-allocator",
+    "nlohmann-json"
   ]
 }
