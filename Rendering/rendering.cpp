@@ -7,48 +7,61 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <filesystem>
+#include <fstream>
+#include <iomanip>
 
 #include "window.hpp"
+#include "config/logger_config.hpp"
 
 
+
+namespace fs = std::filesystem;
 using namespace std::string_literals;
 
 
-void setup_logger()
+config::LoggerConfig setup_logger()
 {	
-#ifndef NDEBUG
-	spdlog::level::level_enum log_level = spdlog::level::debug;
-#else
-	spdlog::level::level_enum log_level = spdlog::level::info;
-#endif
 
-	std::string log_pattern = "[%H:%M:%S][%^%l%$] %v";
+	const std::string config_filename = "logger_config.json";
+	config::LoggerConfig config;
 
-	auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-	console_sink->set_level(log_level);
-	console_sink->set_pattern(log_pattern);
+	try
+	{
+		config.loadFile(config_filename);
+	}
+	catch (std::exception& e)
+	{
 
-	auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/log.txt", true);
-	file_sink->set_level(log_level);
-	file_sink->set_pattern(log_pattern);
+		using json = nlohmann::json;
+		spdlog::warn("Unable to load logger configuration. '{}'. Using default configuration.", e.what());
+		
+		json default_json = config::LoggerConfig::getDefaultJson();
 
-	std::vector<std::shared_ptr<spdlog::sinks::sink>> sinks{ console_sink, file_sink };
-	auto logger = std::make_shared<spdlog::logger>("default"s, sinks.begin(), sinks.end());
-	logger->set_level(log_level);
-	spdlog::set_default_logger(logger);
+		if (!fs::exists(config_filename))
+		{
+			spdlog::warn("Logger config file doesn't exist. Creating.");
+			std::ofstream oss(config_filename);
+			oss << std::setw(4) << default_json;
+		}
+
+		config.load(default_json);
+	}
+
+	return config;
 }
 
 int main()
 {
 	sys::Window::initializeSystem();
+
+	
+
 	try
 	{
-		setup_logger();
-
+		config::LoggerConfig logger_config = setup_logger();
 
 		auto window = std::make_shared<sys::Window>(800, 600, "vulkan");
-
-		gfx::VulkanApp vk_app(window);
 
 		while (!window->shouldClose())
 		{
@@ -58,7 +71,7 @@ int main()
 	}
 	catch (std::exception& err)
 	{
-		//spdlog::critical("{}", err.what());
+		spdlog::critical("{}", err.what());
 	}
 	sys::Window::terminateSystem();
 }
